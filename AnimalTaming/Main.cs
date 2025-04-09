@@ -56,7 +56,7 @@ namespace AnimalTaming
 			bool isDebug = config.isDebug;
 			if (isDebug)
 			{
-				Debug.Log((prefix ? (mod.ModInfo.Name.Value + " ") : "") + ((str != null) ? str.ToString() : null));
+				Debug.Log((prefix ? (mod.Name + " ") : "") + ((str != null) ? str.ToString() : null));
 			}
 		}
 

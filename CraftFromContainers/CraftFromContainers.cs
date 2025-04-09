@@ -625,17 +625,22 @@ namespace CraftFromContainers
                             if (entity != null)
                             {
                                 var lootable = entity.GetFeature<ITileEntityLootable>() as TEFeatureStorage;
-                                if (lootable != null && lootable.bPlayerStorage)
+                                if (lootable != null)
                                 {
-                                    var lockable = entity.GetFeature<ILockable>();
-                                    if (lockable == null || !lockable.IsLocked() || lockable.IsUserAllowed(PlatformManager.InternalLocalUserIdentifier))
+                                    if (IsValidLoot(lootable))
                                     {
-                                        knownStorageDict[loc] = lootable;
-                                        if (config.range <= 0 || Vector3.Distance(pos, loc) < config.range)
-                                            currentStorageDict[loc] = lootable;
+                                        if (lootable.bPlayerStorage)
+                                        {
+                                            var lockable = entity.GetFeature<ILockable>();
+                                            if (lockable == null || !lockable.IsLocked() || lockable.IsUserAllowed(PlatformManager.InternalLocalUserIdentifier))
+                                            {
+                                                knownStorageDict[loc] = lootable;
+                                                if (config.range <= 0 || Vector3.Distance(pos, loc) < config.range)
+                                                    currentStorageDict[loc] = lootable;
 
+                                            }
+                                        }
                                     }
-
                                 }
 
                             }
@@ -647,6 +652,20 @@ namespace CraftFromContainers
             }
 
         }
+
+        public static bool IsValidLoot(TEFeatureStorage _lootable)
+        {
+            switch (_lootable.lootListName)
+            {
+                case "playerWoodWritableStorage":
+                case "playerIronWritableStorage":
+                case "playerSteelWritableStorage":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public static int GetItemCount(ItemStack[] slots, ItemValue _itemValue)
         {
             int num = 0;
