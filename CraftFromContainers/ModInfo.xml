@@ -3,6 +3,6 @@
 	<Name value="CraftFromContainers" />
   <DisplayName  value="Craft From Containers" />
 	<Description value="Lets you craft items using resources from nearby containers." />
-	<Author value="aedenthorn" />
-	<Version value="1.1.1" />
+	<Author value="Feyde" />
+	<Version value="1.1" />
 </xml>

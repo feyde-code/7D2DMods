@@ -26,8 +26,15 @@ namespace CraftFromContainers
 
             context = this;
             mod = modInstance;
-            Harmony harmony = new Harmony(GetType().ToString());
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            try
+            {
+                Harmony harmony = new Harmony(GetType().ToString());
+                harmony.PatchAll(Assembly.GetExecutingAssembly());
+            }
+            catch (Exception ex)
+            {
+                Dbgl("InitMod:" + ex.Message);
+            }
         }
         public void LoadConfig()
         {
@@ -253,7 +260,7 @@ namespace CraftFromContainers
                 Dbgl("Transpiling ItemActionRepair.CanRemoveRequiredResource");
                 for (int i = 0; i < codes.Count; i++)
                 {
-                    if (codes[i].opcode == OpCodes.Callvirt && (MethodInfo)codes[i].operand == AccessTools.Method(typeof(Bag), nameof(Bag.GetItemCount)))
+                    if (codes[i].opcode == OpCodes.Callvirt && (MethodInfo)codes[i].operand == AccessTools.Method(typeof(Bag), nameof(Bag.GetItemCount), new Type[] { typeof(ItemValue), typeof(int), typeof(int), typeof(bool) }))
                     {
                         Dbgl("Adding method to count items from all storages");
                         codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(CraftFromContainers), nameof(CraftFromContainers.AddAllStoragesCountItem))));
@@ -290,7 +297,6 @@ namespace CraftFromContainers
                 return codes.AsEnumerable();
             }
         }
-        
         [HarmonyPatch(typeof(ItemActionRepair), "canRemoveRequiredItem")]
         static class ItemActionRepair_canRemoveRequiredItem_Patch
         {
@@ -302,7 +308,7 @@ namespace CraftFromContainers
                 Dbgl("Transpiling ItemActionRepair.canRemoveRequiredItem");
                 for (int i = 0; i < codes.Count; i++)
                 {
-                    if (codes[i].opcode == OpCodes.Callvirt && (MethodInfo)codes[i].operand == AccessTools.Method(typeof(Bag), nameof(Bag.GetItemCount)))
+                    if (codes[i].opcode == OpCodes.Callvirt && (MethodInfo)codes[i].operand == AccessTools.Method(typeof(Bag), nameof(Bag.GetItemCount), new Type[] { typeof(ItemValue), typeof(int), typeof(int), typeof(bool) }))
                     {
                         Dbgl("Adding method to count items from all storages");
                         codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(CraftFromContainers), nameof(CraftFromContainers.AddAllStoragesCountItemStack))));
